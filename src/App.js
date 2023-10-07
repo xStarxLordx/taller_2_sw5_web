@@ -1,10 +1,11 @@
 import React from "react";
 import { Routes, Route } from "react-router";
 import Home from "./component/Home"
-import Plato from "./component/Plato"
-import Ordenes from "./component/Ordenes";
+import SignIn from "./component/SignIn"
+import Rutines from "./component/Rutines";
 import Sidebar from "./Ui/Sidebar";
-import LoginScreen from "./component/LoginScreen";
+import Register from "./component/Register";
+import AddRutines from "./component/AddRutines";
 
 function App() {
   return (
@@ -12,10 +13,12 @@ function App() {
     
       <Sidebar/>
       <Routes>
-        <Route path="/login"  element={<LoginScreen/>} />
+        
         <Route path="/home" element={<Home/>} />
-        <Route path="/plato" element={<Plato/>} />
-        <Route path="/ordenes" element={<Ordenes/>} />
+        <Route path="/register" element={<Register/>} />
+        <Route path="/signin" element={<SignIn/>} />
+        <Route path="/rutines" element={<Rutines/>} />
+        <Route path="/addrutines" element={<AddRutines/>} />
       </Routes>
       
     </div>
