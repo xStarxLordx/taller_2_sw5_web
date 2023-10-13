@@ -42,8 +42,10 @@ function AddRutines() {
             <a className=" text-white text-xl text-start">Category:</a>
           </label>
           <select name = "category" className=" text-black text-sm ">
-              <option value = "Cardio" className=" text-black text-sm">Cardio</option>
-              <option value = "Muscles" className=" text-black text-sm">Muscles</option>
+              <option value = "Arms" className=" text-black text-sm">Arms</option>
+              <option value = "Legs" className=" text-black text-sm">Legs</option>
+              <option value = "Back" className=" text-black text-sm">Back</option>
+              <option value = "Abs" className=" text-black text-sm">Abs</option>
           </select>
           
 
