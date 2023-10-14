@@ -1,5 +1,9 @@
 import { useRef, useState, useEffect } from "react";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faTimes,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -47,12 +51,12 @@ const Register = () => {
     const v1 = USER_REGEX.test(user);
     const v2 = PWD_REGEX.test(pwd);
     if (!v1 || !v2) {
-        setErrMsg("Invalid Entry");
-        return;
+      setErrMsg("Invalid Entry");
+      return;
     }
-    console.log(user, pwd)
+    console.log(user, pwd);
     setSuccess(true);
-}
+  };
   return (
     <body>
       {success ? (
@@ -73,11 +77,8 @@ const Register = () => {
           </p>
           <h1 className=" text-white text-3xl">Register</h1>
           <form onSubmit={handleSubmit}>
-            
-          <label htmlFor="name">
+            <label htmlFor="name">
               <a className=" text-white text-xl text-left">Full Name:</a>
-              
-              
             </label>
             <input
               type="text"
@@ -89,8 +90,6 @@ const Register = () => {
             />
             <label htmlFor="id">
               <a className=" text-white text-xl text-left">ID:</a>
-              
-              
             </label>
             <input
               type="text"
@@ -102,8 +101,6 @@ const Register = () => {
             />
             <label htmlFor="email">
               <a className=" text-white text-xl text-left">e-mail:</a>
-              
-              
             </label>
             <input
               type="text"
@@ -192,8 +189,10 @@ const Register = () => {
               <span aria-label="percent">%</span>
             </p>
 
-            <label htmlFor="confirm_pwd" >
-              <a className=" text-white text-xl justify-start">Confirm Password:</a>
+            <label htmlFor="confirm_pwd">
+              <a className=" text-white text-xl justify-start">
+                Confirm Password:
+              </a>
               <FontAwesomeIcon
                 icon={faCheck}
                 className={validMatch && matchPwd ? "valid" : "hide"}
@@ -224,7 +223,9 @@ const Register = () => {
               Must match the first password input field.
             </p>
 
-            <button className=" text-white text-base "
+            <button
+              className=" text-white text-base"
+             
               disabled={!validName || !validPwd || !validMatch ? true : false}
             >
               Sign Up
@@ -234,8 +235,9 @@ const Register = () => {
             <a className=" text-sm text-gray-950">Already registered?</a>
             <br />
             <span className="line">
-              
-              <a href="/signin" className=" text-sm text-gray-950">Sign In</a>
+              <a href="/signin" className=" text-sm text-gray-950">
+                Sign In
+              </a>
             </span>
           </p>
         </section>

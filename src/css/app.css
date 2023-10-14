@@ -32,7 +32,7 @@ section {
     
     max-width: 420px;
     min-height: 400px;
-    border-radius:8%;
+    border-radius:10%;
     border-color: #000000;
     border-width: 3px;
     display: flex;
@@ -40,8 +40,8 @@ section {
     
     padding: 1rem;
     margin-left: 480px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    
+    
     background-color: rgba(0,0,0,0.4);
 }
 
@@ -64,7 +64,8 @@ select,
 textarea {
   font-family: 'Nunito', sans-serif;
   font-size: 22px;
-  padding: 0.25rem;
+  color: #000;
+  padding:0.25;
   border-radius: 0.5rem;
 }
 
@@ -74,10 +75,13 @@ button {
 }
 
 button {
-  padding: 0.1rem;
+  padding: 0.25rem;
+  width: 150px;
   max-width: 70%;
   align-self: center;
   background-color: #7d7c7c;
+  border-color: #000;
+  border-width: 2px;
 }
 
 .instructions {
