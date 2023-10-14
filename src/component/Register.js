@@ -58,7 +58,7 @@ const Register = () => {
     setSuccess(true);
   };
   return (
-    <body>
+    <>
       {success ? (
         <section>
           <h1>Success!</h1>
@@ -242,7 +242,7 @@ const Register = () => {
           </p>
         </section>
       )}
-    </body>
+    </>
   );
 };
 
