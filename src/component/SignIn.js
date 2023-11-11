@@ -1,107 +1,108 @@
 import React from "react";
 import { useRef, useState, useEffect } from "react";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faTimes,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { FIREBASE_AUTH } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+  getAuth,
+  User,
+} from "firebase/auth";
+import { Routes, Route, redirect } from "react-router";
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
-
 const SignIn = () => {
-    const userRef = useRef();
+  const userRef = useRef();
   const errRef = useRef();
-    const [user, setUser] = useState("");
-    const [pwd, setPwd] = useState("");
-    const [validName, setValidName] = useState(false);
-    const [userFocus, setUserFocus] = useState(false);
-    const [validPwd, setValidPwd] = useState(false);
-    const [pwdFocus, setPwdFocus] = useState(false);
-    const [errMsg, setErrMsg] = useState("");
-    const [success, setSuccess] = useState(false);
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
+  const [validPwd, setValidPwd] = useState(false);
+  const [pwdFocus, setPwdFocus] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const auth = FIREBASE_AUTH;
+  const navigate = useNavigate();
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
 
-    useEffect(() => {
-        userRef.current.focus();
-      }, []);
-    
-      useEffect(() => {
-        setValidName(USER_REGEX.test(user));
-      }, [user]);
-    
-      useEffect(() => {
-        setValidPwd(PWD_REGEX.test(pwd));
-        
-      }, [pwd]);
+  useEffect(() => {
+    setValidName(USER_REGEX.test(email));
+  }, [email]);
 
-      useEffect(() => {
-        setErrMsg("");
-      }, [user, pwd]);
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        // if button enabled with JS hack
-        const v1 = USER_REGEX.test(user);
-        const v2 = PWD_REGEX.test(pwd);
-        if (!v1 || !v2) {
-            setErrMsg("Invalid Entry");
-            return;
-        }
-        console.log(user, pwd)
-        setSuccess(true);
+  useEffect(() => {
+    setValidPwd(PWD_REGEX.test(pwd));
+  }, [pwd]);
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [email, pwd]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // if button enabled with JS hack
+    setLoading(true);
+    
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, pwd);
+      console.log(response);
+      //console.warn(auth.currentUser.emailVerified)
+      if (auth.currentUser.emailVerified == true) {
+        navigate("/home")
+      } else {
+        alert("Por favor verifica el correo.");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Correo o contraseña incorrectos.");
+    } finally {
+      setLoading(false);
+      
     }
+  };
 
-    return (
-        <body>
-            <section>
-                <form onSubmit={handleSubmit}>
+  return (
+    <>
+      <div className="h-screen flex items-center justify-center ">
+        <section>
+          <form onSubmit={handleSubmit}>
             <label htmlFor="username">
-              <a className=" text-white text-xl text-left">Username:</a>
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validName ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validName || !user ? "hide" : "invalid"}
-              />
+              <a className=" block text-gray-900 text-2xl font-bold mb-2">
+                Email:
+              </a>
             </label>
             <input
+              className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="text"
-              id="username"
+              id="email"
               ref={userRef}
               autoComplete="off"
-              onChange={(e) => setUser(e.target.value)}
-              value={user}
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               required
               aria-invalid={validName ? "false" : "true"}
               aria-describedby="uidnote"
               onFocus={() => setUserFocus(true)}
               onBlur={() => setUserFocus(false)}
             />
-            <p
-              id="uidnote"
-              className={
-                userFocus && user && !validName ? "instructions" : "offscreen"
-              }
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-              4 to 24 characters.
-              <br />
-              Must begin with a letter.
-              <br />
-              Letters, numbers, underscores, hyphens allowed.
-            </p>
 
             <label htmlFor="password">
-              <a className=" text-white text-xl text-start">Password:</a>
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validPwd ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validPwd || !pwd ? "hide" : "invalid"}
-              />
+              <a className=" block text-gray-900 text-2xl font-bold mb-2">
+                Password:
+              </a>
             </label>
             <input
+              className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="password"
               id="password"
               onChange={(e) => setPwd(e.target.value)}
@@ -112,34 +113,19 @@ const SignIn = () => {
               onFocus={() => setPwdFocus(true)}
               onBlur={() => setPwdFocus(false)}
             />
-            <p
-              id="pwdnote"
-              className={pwdFocus && !validPwd ? "instructions" : "offscreen"}
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-              8 to 24 characters.
-              <br />
-              Must include uppercase and lowercase letters, a number and a
-              special character.
-              <br />
-              Allowed special characters:{" "}
-              <span aria-label="exclamation mark">!</span>{" "}
-              <span aria-label="at symbol">@</span>{" "}
-              <span aria-label="hashtag">#</span>{" "}
-              <span aria-label="dollar sign">$</span>{" "}
-              <span aria-label="percent">%</span>
-            </p>
-            <button className=" text-white text-base "
-              disabled={!validName || !validPwd  ? true : false}
-            >
-              Sign Up
-            </button>
-              </form>
-            </section>
-            
-            
-        </body>
-    )
-}
+            <div className="items-center justify-center">
+              <button
+                className=" bg-gray-800 hover:bg-gray-900 w-60 mt-5 p-2 text-white uppercase font-bold justify-center"
+                type="submit"
+              >
+                Sign Up
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </>
+  );
+};
 
 export default SignIn;

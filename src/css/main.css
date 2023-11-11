@@ -511,6 +511,9 @@ video {
 .h-40 {
   height: 10rem;
 }
+.h-screen {
+  height: 100vh;
+}
 .min-h-screen {
   min-height: 100vh;
 }
@@ -529,8 +532,8 @@ video {
 .content-center {
   align-content: center;
 }
-.justify-start {
-  justify-content: flex-start;
+.items-center {
+  align-items: center;
 }
 .justify-center {
   justify-content: center;
@@ -564,9 +567,6 @@ video {
 .text-center {
   text-align: center;
 }
-.text-start {
-  text-align: start;
-}
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -578,10 +578,6 @@ video {
 .text-5xl {
   font-size: 3rem;
   line-height: 1;
-}
-.text-base {
-  font-size: 1rem;
-  line-height: 1.5rem;
 }
 .text-sm {
   font-size: 0.875rem;
@@ -599,9 +595,6 @@ video {
 }
 .uppercase {
   text-transform: uppercase;
-}
-.lowercase {
-  text-transform: lowercase;
 }
 .leading-tight {
   line-height: 1.25;

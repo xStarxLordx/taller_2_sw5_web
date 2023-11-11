@@ -1,13 +1,17 @@
 import { useRef, useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { FIREBASE_AUTH } from "../firebase";
 import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification, getAuth, User
+} from "firebase/auth";
 
+//const [bar,setBar] = useState(false)
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 
 const Register = () => {
   const userRef = useRef();
@@ -17,25 +21,20 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [user, setUser] = useState("");
   const [validName, setValidName] = useState(false);
-  const [userFocus, setUserFocus] = useState(false);
+ const navigate = useNavigate();
   const [pwd, setPwd] = useState("");
   const [validPwd, setValidPwd] = useState(false);
   const [pwdFocus, setPwdFocus] = useState(false);
-
+  const auth = FIREBASE_AUTH;
   const [matchPwd, setMatchPwd] = useState("");
   const [validMatch, setValidMatch] = useState(false);
   const [matchFocus, setMatchFocus] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
 
-  useEffect(() => {
-    setValidName(USER_REGEX.test(user));
-  }, [user]);
+
 
   useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd));
@@ -44,21 +43,41 @@ const Register = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd, matchPwd]);
+  }, [email, pwd, matchPwd]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if button enabled with JS hack
-    const v1 = USER_REGEX.test(user);
-    const v2 = PWD_REGEX.test(pwd);
-    if (!v1 || !v2) {
-      setErrMsg("Invalid Entry");
-      return;
+    try {
+      console.log(email, pwd);
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        pwd
+      );
+      sendEmailVerification(auth.currentUser)
+      .then(() => {
+        // Email verification sent!
+        // ...
+        alert("Correo de verificación enviado, por favor verifica el correo para poder iniciar sesión.");
+      });
+      //console.warn(auth.currentUser.emailVerified)
+      console.log(response);
+      
+      /* navigation.navigate("Home"); */
+    } catch (error) {
+      console.log(error);
+      alert("Correo o contraseña incorrectos.");
+    } finally {
+      setLoading(false);
+      
     }
+  
+    
     console.log(user, pwd);
-    setSuccess(true);
   };
   return (
     <>
+      <div className="h-screen flex items-center justify-center ">
       {success ? (
         <section>
           <h1>Success!</h1>
@@ -68,19 +87,14 @@ const Register = () => {
         </section>
       ) : (
         <section>
-          <p
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p>
-          <h1 className=" text-white text-3xl">Register</h1>
+          
+          <h1 className=" block text-gray-900 text-3xl font-bold mb-2">Register</h1>
           <form onSubmit={handleSubmit}>
-            <label htmlFor="name">
-              <a className=" text-white text-xl text-left">Full Name:</a>
+            {/* <label htmlFor="name">
+              <a className=" block text-gray-900 text-xl font-bold mb-2 mt-10">Full Name:</a>
             </label>
             <input
+            className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="text"
               id="name"
               autoComplete="off"
@@ -89,20 +103,22 @@ const Register = () => {
               required
             />
             <label htmlFor="id">
-              <a className=" text-white text-xl text-left">ID:</a>
+              <a className=" block text-gray-900 text-xl font-bold mb-2 mt-10">ID:</a>
             </label>
             <input
+            className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="text"
               id="id"
               autoComplete="off"
               onChange={(e) => setId(e.target.value)}
               value={id}
               required
-            />
+            /> */}
             <label htmlFor="email">
-              <a className=" text-white text-xl text-left">e-mail:</a>
+              <a className=" block text-gray-900 text-xl font-bold mb-2 mt-10">e-mail:</a>
             </label>
             <input
+            className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="text"
               id="email"
               autoComplete="on"
@@ -111,18 +127,12 @@ const Register = () => {
               required
             />
 
-            <label htmlFor="username">
-              <a className=" text-white text-xl text-left">Username:</a>
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validName ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validName || !user ? "hide" : "invalid"}
-              />
+            {/* <label htmlFor="username">
+              <a className=" block text-gray-900 text-xl font-bold mb-2 mt-10">Username:</a>
+              
             </label>
             <input
+            className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="text"
               id="username"
               ref={userRef}
@@ -134,33 +144,15 @@ const Register = () => {
               aria-describedby="uidnote"
               onFocus={() => setUserFocus(true)}
               onBlur={() => setUserFocus(false)}
-            />
-            <p
-              id="uidnote"
-              className={
-                userFocus && user && !validName ? "instructions" : "offscreen"
-              }
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-              4 to 24 characters.
-              <br />
-              Must begin with a letter.
-              <br />
-              Letters, numbers, underscores, hyphens allowed.
-            </p>
+            /> */}
+            
 
             <label htmlFor="password">
-              <a className=" text-white text-xl text-start">Password:</a>
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validPwd ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validPwd || !pwd ? "hide" : "invalid"}
-              />
+              <a className=" block text-gray-900 text-xl font-bold mb-2 mt-10">Password:</a>
+              
             </label>
             <input
+            className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="password"
               id="password"
               onChange={(e) => setPwd(e.target.value)}
@@ -171,38 +163,15 @@ const Register = () => {
               onFocus={() => setPwdFocus(true)}
               onBlur={() => setPwdFocus(false)}
             />
-            <p
-              id="pwdnote"
-              className={pwdFocus && !validPwd ? "instructions" : "offscreen"}
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-              8 to 24 characters.
-              <br />
-              Must include uppercase and lowercase letters, a number and a
-              special character.
-              <br />
-              Allowed special characters:{" "}
-              <span aria-label="exclamation mark">!</span>{" "}
-              <span aria-label="at symbol">@</span>{" "}
-              <span aria-label="hashtag">#</span>{" "}
-              <span aria-label="dollar sign">$</span>{" "}
-              <span aria-label="percent">%</span>
-            </p>
-
+            
             <label htmlFor="confirm_pwd">
-              <a className=" text-white text-xl justify-start">
+              <a className=" block text-gray-900 text-xl font-bold mb-2 mt-10">
                 Confirm Password:
               </a>
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validMatch && matchPwd ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validMatch || !matchPwd ? "hide" : "invalid"}
-              />
+              
             </label>
             <input
+            className=" shadow appearance-none border rounded w-full py-2 text-black leading-tight focus:outline-none "
               type="password"
               id="confirm_pwd"
               onChange={(e) => setMatchPwd(e.target.value)}
@@ -213,20 +182,12 @@ const Register = () => {
               onFocus={() => setMatchFocus(true)}
               onBlur={() => setMatchFocus(false)}
             />
-            <p
-              id="confirmnote"
-              className={
-                matchFocus && !validMatch ? "instructions" : "offscreen"
-              }
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-              Must match the first password input field.
-            </p>
+            
 
             <button
-              className=" text-white text-base"
-             
-              disabled={!validName || !validPwd || !validMatch ? true : false}
+              className=" bg-gray-800 hover:bg-gray-900 w-60 mt-5 p-2 text-white uppercase font-bold justify-center"
+              type="submit"
+              
             >
               Sign Up
             </button>
@@ -242,6 +203,7 @@ const Register = () => {
           </p>
         </section>
       )}
+      </div>
     </>
   );
 };

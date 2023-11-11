@@ -1,8 +1,10 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { loginCheck } from '../component/Register'
-function Sidebar() {
-  
+import { onAuthStateChanged } from 'firebase/auth';
+import { FIREBASE_AUTH } from "../firebase";
+
+function Sidebar1() {
+
 
   return (
     
@@ -16,9 +18,7 @@ function Sidebar() {
                     <NavLink className="p-1 text-gray-400 block hover:bg-gray-400 hover:text-gray-900 text-2xl"  end to="/home">Home</NavLink>
                     <NavLink className="p-1 text-gray-400 block hover:bg-gray-400 hover:text-gray-900 text-2xl"  end to="/signin">Sign In</NavLink>
                     <NavLink className="p-1 text-gray-400 block hover:bg-gray-400 hover:text-gray-900 text-2xl"  end to="/register">Register</NavLink>
-                                       
-                    <NavLink className="p-1 text-gray-400 block hover:bg-gray-400 hover:text-gray-900 text-2xl"  end to="/addrutines">Add training</NavLink>
-                    <NavLink className="p-1 text-gray-400 block hover:bg-gray-400 hover:text-gray-900 text-2xl"  end to="/rutines">See training</NavLink>
+
                 </nav>
 
             </div>
@@ -27,4 +27,4 @@ function Sidebar() {
   )
 }
 
-export default Sidebar
+export default Sidebar1

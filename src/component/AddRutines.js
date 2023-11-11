@@ -3,7 +3,8 @@ import { useRef, useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { FirebaseContext } from "../firebase";
 import * as Yup from 'yup'
-import FIREBASE from "../firebase";
+import { FIREBASE_DB } from "../firebase";
+
 
 function AddRutines() {
   const { firebase } = useContext(FirebaseContext);
@@ -11,7 +12,6 @@ function AddRutines() {
   const [purpose, setPurpose] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [hours, setHours] = useState("");
 
   const formik = useFormik({
     initialValues:{
@@ -32,7 +32,8 @@ function AddRutines() {
 
   onSubmit: rutine => {
     try {
-      FIREBASE.db.collection("rutinas").add(rutine);
+      console.log(rutine)
+      FIREBASE_DB.db.collection("rutines").add(rutine);
       
       console.log(rutine)
     } catch (e) {
